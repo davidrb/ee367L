@@ -30,8 +30,7 @@ public:
 
     // parent
     close(fd[1]);
-    int status;
-    wait(&status);
+    wait(&return_status);
 
     char buffer[10000u];
     std::memset(buffer, 0, sizeof buffer);
@@ -43,8 +42,11 @@ public:
 
   auto get_output() -> std::string; 
 
+  auto get_return_status() -> int;
+
 private:
   std::string output;
+  int return_status;
 };
 
 #endif

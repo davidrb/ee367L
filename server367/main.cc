@@ -26,6 +26,19 @@ void populate_handlers() {
   handler["l"] = [&](string const&) {
     std::cout << Command{"/usr/bin/ls", "ls"}.get_output() << std::flush;
   };
+
+  handler ["c"] = [&](string const& filename) {
+    auto cmd = Command{"/usr/bin/ls", "ls", filename.c_str()};
+    if(cmd.get_return_status() == 0)
+      std::cout << "File exists." << std::endl;
+    else 
+      std::cout << "File does not exist." << std::endl;
+  };
+
+  handler["p"] = [&](string const& filename) {
+    std::cout << Command{"/usr/bin/cat", "cat", filename.c_str()}.get_output()
+              << std::flush;
+  };
 }
 
 int main() {
