@@ -1,0 +1,11 @@
+apply plugin: "cpp"
+apply plugin: "google-test"
+
+model {
+  components {
+    libserver367(NativeLibrarySpec)
+    server367(NativeExecutableSpec)
+
+    client367(NativeExecutableSpec)
+  }
+}
