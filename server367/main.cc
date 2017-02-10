@@ -9,42 +9,13 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+#include "src/command.hpp"
+
 using std::cin;
 using std::string;
 
 auto handler = std::map<string, std::function<void(string const&)>>{};
 auto running = true;
-
-auto run_subprocess(const char *file, const char* arg) -> string {
-  int fd[2];
-  pipe(fd);
-
-  auto pid = fork();
-
-  if(pid == -1) 
-    throw std::runtime_error{"error forking"};
-
-  if(pid == 0) {
-    // child
-    dup2(fd[1], STDOUT_FILENO);
-    close(fd[1]);
-    close(fd[0]);
-    execl(file, arg, nullptr);
-    throw std::runtime_error{"could not exec."};
-  } 
-
-  // parent
-  close(fd[1]);
-  int status;
-  wait(&status);
-
-  char buffer[10000u];
-  std::memset(buffer, 0, sizeof buffer);
-  read(fd[0], buffer, sizeof buffer);
-  close(fd[0]);
-
-  return buffer;
-}
 
 void populate_handlers() {
   handler["q"] = [&](string const&) {
@@ -53,7 +24,7 @@ void populate_handlers() {
   };
 
   handler["l"] = [&](string const&) {
-    std::cout << run_subprocess("/usr/bin/ls", "ls");
+    std::cout << Command{"/usr/bin/ls", "ls"}.get_output() << std::flush;
   };
 }
 
